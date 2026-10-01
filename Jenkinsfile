@@ -1,5 +1,9 @@
 pipeline {
     agent { label 'host1-arie' }
+    environtment {
+        SONAR_TOKEN = credentials('token-sonar')
+        SONAR_HOST =  credentials('host-sonar') 
+    }
 
     stages {
         stage('Pull SCM') {
@@ -34,8 +38,8 @@ pipeline {
                 sonar-scanner \
                 -Dsonar.projectKey=simple-apps \
                 -Dsonar.sources=. \
-                -Dsonar.host.url=http://172.23.4.117:9000 \
-                -Dsonar.token=squ_95cd610670fa530bf9587ad6819d0d154aae105d
+                -Dsonar.host.url=${SONAR_HOST} \
+                -Dsonar.token=${SONAR_TOKEN}
                 '''
             }
         }
