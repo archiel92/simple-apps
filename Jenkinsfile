@@ -43,7 +43,6 @@ pipeline {
         stage('Deliver') {
             steps {
                 input message: 'Are you sure?', ok: 'Yes'
-                '''
             }
         }
 
