@@ -1,0 +1,53 @@
+pipeline {
+    agent { label 'host1-arie' }
+
+    stages {
+        stage('Pull SCM') {
+            steps {
+                git branch: 'main', url: 'https://github.com/archiel92/simple-apps.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh'''
+                cd app
+                npm install
+                '''
+            }
+        }
+        
+        stage('Testing') {
+            steps {
+                sh'''
+                cd app
+                npm test
+                npm run test:coverage
+                '''
+            }
+        }
+        
+        stage('Code Review') {
+            steps {
+                sh'''
+                cd app
+                sonar-scanner \
+                -Dsonar.projectKey=simple-apps \
+                -Dsonar.sources=. \
+                -Dsonar.host.url=http://172.23.10.117:9000 \
+                -Dsonar.token=squ_95cd610670fa530bf9587ad6819d0d154aae105d
+                '''
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh'''
+                docker compose up --build -d
+                '''
+            }
+        }
+        
+        
+    }
+}
